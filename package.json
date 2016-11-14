@@ -1,0 +1,31 @@
+{
+  "name": "uw-lib-auth.js",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/utilitywarehouse/uw-lib-auth.js.git"
+  },
+  "keywords": [],
+  "author": "Mateusz Sojda",
+  "license": "ISC",
+  "description": "JWT based OAuth2 auth client and express middleware.",
+  "devDependencies": {
+    "babel-core": "^6.18.2",
+    "babel-loader": "^6.2.7",
+    "babel-polyfill": "^6.16.0",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-stage-0": "^6.16.0",
+    "babel-register": "^6.18.0",
+    "chai": "^3.5.0",
+    "chai-as-promised": "^6.0.0",
+    "mocha": "^3.1.2",
+    "sinon": "^1.17.6",
+    "sinon-as-promised": "^4.0.2",
+    "sinon-chai": "^2.8.0"
+  },
+  "dependencies": {
+    "jsonwebtoken": "^7.1.9"
+  }
+}
