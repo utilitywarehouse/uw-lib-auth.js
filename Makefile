@@ -7,3 +7,7 @@ test-spec:
 
 test-functional:
 	./node_modules/.bin/mocha -r tests/spec/.bootstrap.js --compilers js:babel-core/register tests/functional/
+
+example:
+	cd examples && npm install
+	cd examples && node express
