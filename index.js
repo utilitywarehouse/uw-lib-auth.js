@@ -123,12 +123,39 @@ class oAuth2JWTMethod extends Method {
 				return callback(err);
 			}
 
-			callback(null, payload);
+			const scopes = ('scopes' in payload && Array.isArray(payload.scopes)) ? payload.scopes : [];
+			const auth = new ScopeBasedAuthorisation(scopes);
+
+			callback(null, auth);
 		});
 	}
 }
 
+class Authorisation {
+	canReadPartnerInformation(partnerId) {
+		throw new Error('Missing implementation');
+	}
+}
+
+class ScopeBasedAuthorisation extends Authorisation {
+	constructor(scopes = []) {
+		super();
+		this.scopes = scopes;
+	}
+
+	canReadPartnerInformation(partnerId) {
+		return this._hasScope(`partner.${partnerId}.read`);
+	}
+
+	_hasScope(scope) {
+		return this.scopes.indexOf(scope) !== -1;
+	}
+}
+
 module.exports.Provider = Provider;
+module.exports.Authorisation = {
+	ScopeBased: ScopeBasedAuthorisation
+};
 module.exports.Method = {
 	Method: Method,
 	oAuth2JWT: oAuth2JWTMethod

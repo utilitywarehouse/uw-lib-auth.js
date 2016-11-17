@@ -2,13 +2,14 @@ const authModule = require('./../..');
 const path = require('path');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
+const partnerId = 'K97777';
 
 describe('Auth', function () {
   describe('Provider', function(){
     describe('Middleware', function () {
       before(function(){
         const key = fs.readFileSync(path.join(__dirname, '../resources/private.key'));
-        this.payload = { foo: 'bar' };
+        this.payload = { scopes: [`partner.${partnerId}.read`] };
         this.token = jwt.sign(this.payload, key, { algorithm: 'RS256'});
 
         this.auth = new authModule.Provider([
@@ -24,7 +25,7 @@ describe('Auth', function () {
         let response = {};
 
         this.auth.middleware()(request, response, () => {
-          expect(request.auth).to.have.property('foo', 'bar');
+          expect(request.auth).to.be.an.instanceOf(authModule.Authorisation.ScopeBased);
           done();
         });
       });
@@ -46,7 +47,7 @@ describe('Auth', function () {
 		describe('oAuth2JWT', function () {
 			it('authenticates user using header included token', function(done) {
         const key = fs.readFileSync(path.join(__dirname, '../resources/private.key'));
-        const payload = { foo: 'bar' };
+        const payload = { scopes: [`partner.${partnerId}.read`] };
         const token = jwt.sign(payload, key, { algorithm: 'RS256'});
 
         const oauthMethod = new authModule.Method.oAuth2JWT({
@@ -55,7 +56,8 @@ describe('Auth', function () {
         });
 
         oauthMethod.execute({authorization: `Bearer ${token}`}, (err, result) => {
-          expect(result).to.have.property('foo', 'bar');
+          expect(result).to.be.an.instanceOf(authModule.Authorisation.ScopeBased);
+          expect(result.canReadPartnerInformation(partnerId)).to.equal(true);
           expect(err).to.be.null;
           done();
         });
