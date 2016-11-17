@@ -103,4 +103,19 @@ describe('Auth', function () {
 			});
 		});
 	});
+	describe('Authorisation', function () {
+		describe('ScopeBased', function () {
+			it('permits partner reads if the associated scope is held', function() {
+				const partnerId = 'K97777';
+				const authz = new authModule.Authorisation.ScopeBased([`partner.${partnerId}.read`]);
+
+				expect(authz.canReadPartnerInformation(partnerId)).to.equal(true);
+			});
+			it('does not permit partner reads if the associated scope is not held', function() {
+				const authz = new authModule.Authorisation.ScopeBased([`partner.K97777.read`]);
+
+				expect(authz.canReadPartnerInformation('123')).to.equal(false);
+			});
+		})
+	})
 });
