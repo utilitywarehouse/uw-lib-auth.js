@@ -40,13 +40,15 @@ describe('Auth', function () {
 				stub.applies = () => true;
 
 				stub.execute = function([], callback) {
-					callback(null, 123);
+					callback(null, 123, 456);
 				};
 
-				provider.execute([], (err, result) => {
+				provider.execute([], (err, result, credentials) => {
 					expect(err).to.not.exist;
 					expect(result).to.exist
 						.and.to.be.equal(123);
+					expect(credentials).to.exist
+						.and.to.be.equal(456);
 						done();
 				});
 			});

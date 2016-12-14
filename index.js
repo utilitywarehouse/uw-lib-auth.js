@@ -31,18 +31,19 @@ class Provider {
 			return returnCallback(new Error('Could not match handler'));
 		}
 
-		handler.execute(headers, (err, result) => {
-			return returnCallback(err, result);
+		handler.execute(headers, (err, result, credentials) => {
+			return returnCallback(err, result, credentials);
 		});
 	}
 
 	middleware() {
 		return (req, res, next) => {
-			this.execute(req.headers, (err, result) => {
+			this.execute(req.headers, (err, result, credentials) => {
 				if (err) {
 					return next({status: 401, message: 'Unauthorized'});
 				}
 				req.auth = result;
+				req.auth.credentials = credentials;
 				next();
 			});
 		};
@@ -88,6 +89,17 @@ class Method {
 	}
 }
 
+const SOURCE_HEADER = 'header';
+const KEY_AUTHORIZATION = 'authorization';
+
+class Credentials {
+	constructor(source, key, value) {
+		this.source = source;
+		this.key = key;
+		this.value = value;
+	}
+}
+
 class oAuth2JWTMethod extends Method {
 	constructor ({key, algo} = {}) {
 		super();
@@ -123,7 +135,7 @@ class oAuth2JWTMethod extends Method {
 				return callback(err);
 			}
 
-			callback(null, payload);
+			callback(null, payload, new Credentials(SOURCE_HEADER, KEY_AUTHORIZATION, parts[0]));
 		});
 	}
 }
