@@ -25,6 +25,7 @@ describe('Auth', function () {
 
         this.auth.middleware()(request, response, () => {
           expect(request.auth).to.have.property('foo', 'bar');
+          expect(request.auth).to.have.property('credentials');
           done();
         });
       });
@@ -48,14 +49,18 @@ describe('Auth', function () {
         const key = fs.readFileSync(path.join(__dirname, '../resources/private.key'));
         const payload = { foo: 'bar' };
         const token = jwt.sign(payload, key, { algorithm: 'RS256'});
+        const header = `Bearer ${token}`;
 
         const oauthMethod = new authModule.Method.oAuth2JWT({
           key: authModule.Key.fromFile(path.join(__dirname, '../resources/public.pem')),
           algo: [authModule.Key.RS256]
         });
 
-        oauthMethod.execute({authorization: `Bearer ${token}`}, (err, result) => {
+        oauthMethod.execute({authorization: header}, (err, result, credentials) => {
           expect(result).to.have.property('foo', 'bar');
+          expect(credentials.source).to.equal('header');
+          expect(credentials.key).to.equal('authorization');
+          expect(credentials.value).to.equal(header);
           expect(err).to.be.null;
           done();
         });
