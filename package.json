@@ -9,7 +9,7 @@
   },
   "keywords": [],
   "author": "Mateusz Sojda",
-  "license": "ISC",
+  "license": "MIT",
   "description": "JWT based OAuth2 auth client and express middleware.",
   "devDependencies": {
     "babel-core": "^6.18.2",
