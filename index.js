@@ -1,14 +1,24 @@
 const fs = require('fs');
 const jwt = require('jsonwebtoken');
 
+class Method {
+	applies() {
+		throw new Error('Missing implementation');
+	}
+
+	execute(headers, callback) {
+		callback(new Error('Missing implementation'), null);
+	}
+}
+
 class Provider {
-	constructor (methods = []) {
+	constructor(methods = []) {
 		if (!Array.isArray(methods)) {
 			const badType = typeof (methods);
 			throw new Error(`Expected methods array, got ${badType} instead.`);
 		}
 
-		const badMethods = methods.filter((m) => !(m instanceof Method));
+		const badMethods = methods.filter(m => !(m instanceof Method));
 
 		if (badMethods.length > 0) {
 			const badType = typeof (badMethods[0]);
@@ -18,10 +28,10 @@ class Provider {
 		this.methods = methods;
 	}
 
-	execute (headers, returnCallback) {
+	execute(headers, returnCallback) {
 		let handler = null;
 
-		for(let i = 0; !handler && i < this.methods.length; i++) {
+		for (let i = 0; !handler && i < this.methods.length; i++) {
 			if (this.methods[i].applies(headers)) {
 				handler = this.methods[i];
 			}
@@ -53,11 +63,11 @@ class Provider {
 const ALGO_RS256 = 'RS256';
 
 class Key {
-	static get RS256 () {
+	static get RS256() {
 		return ALGO_RS256;
 	}
 
-	static fromFile (filePath) {
+	static fromFile(filePath) {
 		let key;
 		try {
 			key = fs.readFileSync(filePath);
@@ -67,25 +77,15 @@ class Key {
 		return new Key(key);
 	}
 
-	static fromString (key) {
+	static fromString(key) {
 		return new Key(key);
 	}
 
-	constructor (key) {
+	constructor(key) {
 		if (!key) {
 			throw new Error('Key cannot be empty');
 		}
 		this.key = key;
-	}
-}
-
-class Method {
-	applies () {
-		throw new Error('Missing implementation');
-	}
-
-	execute (headers, callback) {
-		callback(new Error('Missing implementation'), null);
 	}
 }
 
@@ -101,9 +101,9 @@ class Credentials {
 }
 
 class oAuth2JWTMethod extends Method {
-	constructor ({key, algo} = {}) {
+	constructor({key, algo} = {}) {
 		super();
-		if(!(key instanceof Key)) {
+		if (!(key instanceof Key)) {
 			const badType = typeof (key);
 			throw new Error(`Expected an instance of Key, got ${badType} instead`);
 		}
@@ -111,8 +111,8 @@ class oAuth2JWTMethod extends Method {
 		this.algo = algo || [Key.RS256];
 	}
 
-	applies (headers) {
-		if (!headers.hasOwnProperty('authorization')) {
+	applies(headers) {
+		if (!Object.getOwnPropertyDescriptor(headers, 'authorization')) {
 			return false;
 		}
 
@@ -127,10 +127,10 @@ class oAuth2JWTMethod extends Method {
 		return true;
 	}
 
-	execute (headers, callback) {
+	execute(headers, callback) {
 		const parts = headers.authorization.match(/^Bearer\s+(.*)/);
 
-		jwt.verify(parts[1], this.key.key, { algorithms: this.algo }, function (err, payload) {
+		jwt.verify(parts[1], this.key.key, {algorithms: this.algo}, function (err, payload) {
 			if (err) {
 				return callback(err);
 			}
