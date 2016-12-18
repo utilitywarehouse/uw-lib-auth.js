@@ -13,14 +13,6 @@ The module exposes an 'abstract' class `module.Method.Method` that your handler 
 - `applies(headers hash) : bool` - a synchronous function accepting a hash of request headers (all lowercase) that returns true if the correct header is present
 - `execute(headers hash, callback fn(err, result)) : void` - an asynchronous function accepting a hash of request headers and a result callback, any result out of the auth process can be passed in the callback and will be attached to reques
 
-## Future planned handlers
-
-- uw-auth/oauth2-plain - a handler to allow auth if a gateway proxy already verified a token (traefic for example)
-
-## Todo
-
-An interface to return supported auth method via `WWW-Authenticate` header. Currently only `uw-auth/oauth2-jwt` is supported.
-
 ## Usage
 
 ```node
@@ -51,3 +43,9 @@ app.listen(3000, function () {
   console.log('Example app listening on port 3000!')
 })
 ```
+
+## NPM
+
+Lib is published on NPM under the `utilitywarehosue` namespace. It is public.
+
+```yarn add @utilitywarehouse/uw-lib-auth.js```
