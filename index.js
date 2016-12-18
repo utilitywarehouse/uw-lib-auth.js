@@ -50,7 +50,7 @@ class Provider {
 		return (req, res, next) => {
 			this.execute(req.headers, (err, result, credentials) => {
 				if (err) {
-					return next({status: 401, message: 'Unauthorized'});
+					return next({status: 401, message: 'Unauthorized', previous: err});
 				}
 				req.auth = result;
 				req.auth.credentials = credentials;
