@@ -105,4 +105,11 @@ describe('Auth', function () {
 			});
 		});
 	});
+	describe('oAuth2JWT', function () {
+		it('creates a provider instance with the oAuth2JWT method included', function () {
+			const key = new authModule.Key('key');
+			expect(authModule.oAuth2JWT({key}).methods).to.have.lengthOf(1);
+			expect(authModule.oAuth2JWT({key}).methods[0]).to.be.instanceOf(authModule.Method.oAuth2JWT);
+		});
+	});
 });

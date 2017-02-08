@@ -146,3 +146,8 @@ module.exports.Method = {
 	oAuth2JWT: oAuth2JWTMethod
 };
 module.exports.Key = Key;
+module.exports.oAuth2JWT = options => {
+	return new Provider([
+		new oAuth2JWTMethod(options) // eslint-disable-line new-cap
+	]);
+};
