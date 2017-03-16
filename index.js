@@ -78,7 +78,7 @@ class Key {
 	}
 
 	static fromString(key) {
-		return new Key(key.replace(/\\n/g, "\n"));
+		return new Key(key.replace(/\\n/g, '\n'));
 	}
 
 	constructor(key) {
@@ -130,7 +130,7 @@ class oAuth2JWTMethod extends Method {
 	execute(headers, callback) {
 		const parts = headers.authorization.match(/^Bearer\s+(.*)/);
 
-		jwt.verify(parts[1], this.key.key, {algorithms: this.algo}, function (err, payload) {
+		jwt.verify(parts[1], this.key.key, {algorithms: this.algo, clockTolerance: 2}, function (err, payload) {
 			if (err) {
 				return callback(err);
 			}
