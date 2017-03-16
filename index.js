@@ -78,7 +78,7 @@ class Key {
 	}
 
 	static fromString(key) {
-		return new Key(key.replace(/\\n/g, "\n"));
+		return new Key(key.replace(/\\n/g, '\n'));
 	}
 
 	constructor(key) {
