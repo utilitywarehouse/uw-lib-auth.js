@@ -1,8 +1,10 @@
 {
   "name": "@utilitywarehouse/uw-lib-auth.js",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test": "mocha \"tests/**/*.js\""
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/utilitywarehouse/uw-lib-auth.js.git"
@@ -14,14 +16,14 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
-    "mocha": "^3.1.2",
+    "mocha": "^6.1.4",
     "sinon": "^1.17.6",
     "sinon-as-promised": "^4.0.2",
     "sinon-chai": "^2.8.0",
-    "xo": "^0.17.1"
+    "xo": "^0.24.0"
   },
   "dependencies": {
     "async": "^2.1.2",
-    "jsonwebtoken": "^7.1.9"
+    "jsonwebtoken": "^8.5.1"
   }
 }
