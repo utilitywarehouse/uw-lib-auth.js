@@ -1,0 +1,9 @@
+version: 2
+jobs:
+  test:
+    -image: circleci/node:7
+    steps:
+      - checkout
+      - npm install
+      - make lint
+      - make test
