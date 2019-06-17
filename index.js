@@ -52,6 +52,7 @@ class Provider {
 				if (err) {
 					return next({status: 401, message: 'Unauthorized', previous: err});
 				}
+
 				req.auth = result;
 				req.auth.credentials = credentials;
 				next();
@@ -71,9 +72,10 @@ class Key {
 		let key;
 		try {
 			key = fs.readFileSync(filePath);
-		} catch (err) {
+		} catch (error) {
 			throw new Error('Could not read key file');
 		}
+
 		return new Key(key);
 	}
 
@@ -85,6 +87,7 @@ class Key {
 		if (!key) {
 			throw new Error('Key cannot be empty');
 		}
+
 		this.key = key;
 	}
 }
@@ -107,6 +110,7 @@ class oAuth2JWTMethod extends Method {
 			const badType = typeof (key);
 			throw new Error(`Expected an instance of Key, got ${badType} instead`);
 		}
+
 		this.key = key;
 		this.algo = algo || [Key.RS256];
 	}
@@ -130,7 +134,7 @@ class oAuth2JWTMethod extends Method {
 	execute(headers, callback) {
 		const parts = headers.authorization.match(/^Bearer\s+(.*)/);
 
-		jwt.verify(parts[1], this.key.key, {algorithms: this.algo, clockTolerance: 2}, function (err, payload) {
+		jwt.verify(parts[1], this.key.key, {algorithms: this.algo, clockTolerance: 2}, (err, payload) => {
 			if (err) {
 				return callback(err);
 			}
@@ -142,7 +146,7 @@ class oAuth2JWTMethod extends Method {
 
 module.exports.Provider = Provider;
 module.exports.Method = {
-	Method: Method,
+	Method,
 	oAuth2JWT: oAuth2JWTMethod
 };
 module.exports.Key = Key;
