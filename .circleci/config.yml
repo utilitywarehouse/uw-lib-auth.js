@@ -5,9 +5,9 @@ jobs:
       - image: circleci/node:7
     steps:
       - checkout
-      - npm install
-      - make lint
-      - make test
+      - run: npm install
+      - run: make lint
+      - run: make test
 
 workflows:
   version: 2
