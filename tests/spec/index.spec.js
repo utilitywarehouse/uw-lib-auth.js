@@ -1,5 +1,7 @@
 const authModule = require('./../..');
 const path = require('path');
+const expect = require('chai').expect;
+const sinon = require('sinon');
 
 describe('Auth', function () {
 	describe('Provider', function () {

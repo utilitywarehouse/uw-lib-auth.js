@@ -2,6 +2,7 @@ const authModule = require('./../..');
 const path = require('path');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
+const expect = require('chai').expect;
 
 describe('Auth', function () {
   describe('Provider', function(){
