@@ -1,3 +1,5 @@
+# This package is now deprecated, and should not be considered secure and will not be maintained
+
 # uw-lib-auth.js
 
 A node.js module providing universal auth implementation for use in utilitywarehouse service implementation.
