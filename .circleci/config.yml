@@ -2,10 +2,10 @@ version: 2
 jobs:
   test:
     docker:
-      - image: circleci/node:7
+      - image: cimg/node:12
     steps:
       - checkout
-      - run: npm install
+      - run: yarn install
       - run: make lint
       - run: make test
 

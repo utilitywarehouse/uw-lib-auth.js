@@ -12,5 +12,5 @@ lint:
 	./node_modules/.bin/xo index.js
 
 example:
-	cd examples && npm install
+	cd examples && yarn install
 	cd examples && node express
