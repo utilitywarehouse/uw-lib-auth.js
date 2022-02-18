@@ -2,7 +2,7 @@ version: 2
 jobs:
   test:
     docker:
-      - image: cimg/node:12
+      - image: cimg/node:12.22.10
     steps:
       - checkout
       - run: yarn install
