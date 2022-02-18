@@ -6,7 +6,6 @@ jobs:
     steps:
       - checkout
       - run: yarn install
-      - run: make lint
       - run: make test
 
 workflows:
