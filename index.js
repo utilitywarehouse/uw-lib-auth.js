@@ -1,28 +1,30 @@
-const fs = require('fs');
-const jwt = require('jsonwebtoken');
+const fs = require("fs");
+const jwt = require("jsonwebtoken");
 
 class Method {
 	applies() {
-		throw new Error('Missing implementation');
+		throw new Error("Missing implementation");
 	}
 
 	execute(headers, callback) {
-		callback(new Error('Missing implementation'), null);
+		callback(new Error("Missing implementation"), null);
 	}
 }
 
 class Provider {
 	constructor(methods = []) {
 		if (!Array.isArray(methods)) {
-			const badType = typeof (methods);
+			const badType = typeof methods;
 			throw new Error(`Expected methods array, got ${badType} instead.`);
 		}
 
-		const badMethods = methods.filter(m => !(m instanceof Method));
+		const badMethods = methods.filter((m) => !(m instanceof Method));
 
 		if (badMethods.length > 0) {
-			const badType = typeof (badMethods[0]);
-			throw new Error(`Unexpected Method, expected instance of Method, got ${badType} instead`);
+			const badType = typeof badMethods[0];
+			throw new Error(
+				`Unexpected Method, expected instance of Method, got ${badType} instead`
+			);
 		}
 
 		this.methods = methods;
@@ -38,7 +40,7 @@ class Provider {
 		}
 
 		if (!handler) {
-			return returnCallback(new Error('Could not match handler'));
+			return returnCallback(new Error("Could not match handler"));
 		}
 
 		handler.execute(headers, (err, result, credentials) => {
@@ -50,7 +52,7 @@ class Provider {
 		return (req, res, next) => {
 			this.execute(req.headers, (err, result, credentials) => {
 				if (err) {
-					return next({status: 401, message: 'Unauthorized', previous: err});
+					return next({ status: 401, message: "Unauthorized", previous: err });
 				}
 
 				req.auth = result;
@@ -61,7 +63,7 @@ class Provider {
 	}
 }
 
-const ALGO_RS256 = 'RS256';
+const ALGO_RS256 = "RS256";
 
 class Key {
 	static get RS256() {
@@ -73,27 +75,27 @@ class Key {
 		try {
 			key = fs.readFileSync(filePath);
 		} catch (error) {
-			throw new Error('Could not read key file');
+			throw new Error("Could not read key file");
 		}
 
 		return new Key(key);
 	}
 
 	static fromString(key) {
-		return new Key(key.replace(/\\n/g, '\n'));
+		return new Key(key.replace(/\\n/g, "\n"));
 	}
 
 	constructor(key) {
 		if (!key) {
-			throw new Error('Key cannot be empty');
+			throw new Error("Key cannot be empty");
 		}
 
 		this.key = key;
 	}
 }
 
-const SOURCE_HEADER = 'header';
-const KEY_AUTHORIZATION = 'authorization';
+const SOURCE_HEADER = "header";
+const KEY_AUTHORIZATION = "authorization";
 
 class Credentials {
 	constructor(source, key, value) {
@@ -104,10 +106,10 @@ class Credentials {
 }
 
 class oAuth2JWTMethod extends Method {
-	constructor({key, algo} = {}) {
+	constructor({ key, algo } = {}) {
 		super();
 		if (!(key instanceof Key)) {
-			const badType = typeof (key);
+			const badType = typeof key;
 			throw new Error(`Expected an instance of Key, got ${badType} instead`);
 		}
 
@@ -116,7 +118,7 @@ class oAuth2JWTMethod extends Method {
 	}
 
 	applies(headers) {
-		if (!Object.getOwnPropertyDescriptor(headers, 'authorization')) {
+		if (!Object.getOwnPropertyDescriptor(headers, "authorization")) {
 			return false;
 		}
 
@@ -134,24 +136,33 @@ class oAuth2JWTMethod extends Method {
 	execute(headers, callback) {
 		const parts = headers.authorization.match(/^Bearer\s+(.*)/);
 
-		jwt.verify(parts[1], this.key.key, {algorithms: this.algo, clockTolerance: 2}, (err, payload) => {
-			if (err) {
-				return callback(err);
-			}
+		jwt.verify(
+			parts[1],
+			this.key.key,
+			{ algorithms: this.algo, clockTolerance: 2 },
+			(err, payload) => {
+				if (err) {
+					return callback(err);
+				}
 
-			callback(null, payload, new Credentials(SOURCE_HEADER, KEY_AUTHORIZATION, parts[0]));
-		});
+				callback(
+					null,
+					payload,
+					new Credentials(SOURCE_HEADER, KEY_AUTHORIZATION, parts[0])
+				);
+			}
+		);
 	}
 }
 
 module.exports.Provider = Provider;
 module.exports.Method = {
 	Method,
-	oAuth2JWT: oAuth2JWTMethod
+	oAuth2JWT: oAuth2JWTMethod,
 };
 module.exports.Key = Key;
-module.exports.oAuth2JWT = options => {
+module.exports.oAuth2JWT = (options) => {
 	return new Provider([
-		new oAuth2JWTMethod(options) // eslint-disable-line new-cap
+		new oAuth2JWTMethod(options), // eslint-disable-line new-cap
 	]);
 };

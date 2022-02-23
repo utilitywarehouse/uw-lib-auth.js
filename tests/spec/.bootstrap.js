@@ -1,12 +1,14 @@
-process.env.NODE_ENV = 'test';
-process.env.AUTH_KEY = require('fs').readFileSync('./tests/resources/public.pem');
+process.env.NODE_ENV = "test";
+process.env.AUTH_KEY = require("fs").readFileSync(
+	"./tests/resources/public.pem"
+);
 
-global.sinon = require('sinon');
+global.sinon = require("sinon");
 
-var chai = require('chai');
+var chai = require("chai");
 
-chai.use(require('sinon-chai'));
-chai.use(require('chai-as-promised'));
+chai.use(require("sinon-chai"));
+chai.use(require("chai-as-promised"));
 
 global.expect = chai.expect;
 global.should = chai.should();

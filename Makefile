@@ -9,7 +9,7 @@ test-functional:
 	./node_modules/.bin/mocha -r tests/spec/.bootstrap.js tests/functional/
 
 lint:
-	./node_modules/.bin/xo index.js
+	./node_modules/.bin/eslint --fix . && ./node_modules/.bin/prettier --write './**/*.js'
 
 example:
 	cd examples && yarn install

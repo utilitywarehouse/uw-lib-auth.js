@@ -1,70 +1,81 @@
-const authModule = require('./../..');
-const path = require('path');
-const jwt = require('jsonwebtoken');
-const fs = require('fs');
-const expect = require('chai').expect;
+const authModule = require("./../..");
+const path = require("path");
+const jwt = require("jsonwebtoken");
+const fs = require("fs");
+const expect = require("chai").expect;
 
-describe('Auth', function () {
-  describe('Provider', function(){
-    describe('Middleware', function () {
-      before(function(){
-        const key = fs.readFileSync(path.join(__dirname, '../resources/private.key'));
-        this.payload = { foo: 'bar' };
-        this.token = jwt.sign(this.payload, key, { algorithm: 'RS256'});
+describe("Auth", function () {
+	describe("Provider", function () {
+		describe("Middleware", function () {
+			before(function () {
+				const key = fs.readFileSync(
+					path.join(__dirname, "../resources/private.key")
+				);
+				this.payload = { foo: "bar" };
+				this.token = jwt.sign(this.payload, key, { algorithm: "RS256" });
 
-        this.auth = new authModule.Provider([
-          new authModule.Method.oAuth2JWT({
-            key: authModule.Key.fromFile(path.join(__dirname, '../resources/public.pem')),
-            algo: [authModule.Key.RS256]
-          })
-        ]);
-      });
+				this.auth = new authModule.Provider([
+					new authModule.Method.oAuth2JWT({
+						key: authModule.Key.fromFile(
+							path.join(__dirname, "../resources/public.pem")
+						),
+						algo: [authModule.Key.RS256],
+					}),
+				]);
+			});
 
-      it('adds auth context to the request', function(done){
-        let request = {headers: {authorization: `Bearer ${this.token}`}};
-        let response = {};
+			it("adds auth context to the request", function (done) {
+				let request = { headers: { authorization: `Bearer ${this.token}` } };
+				let response = {};
 
-        this.auth.middleware()(request, response, () => {
-          expect(request.auth).to.have.property('foo', 'bar');
-          expect(request.auth).to.have.property('credentials');
-          done();
-        });
-      });
+				this.auth.middleware()(request, response, () => {
+					expect(request.auth).to.have.property("foo", "bar");
+					expect(request.auth).to.have.property("credentials");
+					done();
+				});
+			});
 
-      it('resolves with Unauthorized error when the token cannot be verified', function(done){
-        let request = {headers: {authorization: `Bearer Abcdefg1234567`}};
-        let response = {};
+			it("resolves with Unauthorized error when the token cannot be verified", function (done) {
+				let request = { headers: { authorization: `Bearer Abcdefg1234567` } };
+				let response = {};
 
-        this.auth.middleware()(request, response, (args) => {
-          expect(args).to.contain.property('status', 401);
-          expect(args).to.contain.property('message', 'Unauthorized');
-          expect(request).to.not.contain.property('auth');
-          done();
-        });
-      });
-    });
-  });
-	describe('Methods', function () {
-		describe('oAuth2JWT', function () {
-			it('authenticates user using header included token', function(done) {
-        const key = fs.readFileSync(path.join(__dirname, '../resources/private.key'));
-        const payload = { foo: 'bar' };
-        const token = jwt.sign(payload, key, { algorithm: 'RS256'});
-        const header = `Bearer ${token}`;
+				this.auth.middleware()(request, response, (args) => {
+					expect(args).to.contain.property("status", 401);
+					expect(args).to.contain.property("message", "Unauthorized");
+					expect(request).to.not.contain.property("auth");
+					done();
+				});
+			});
+		});
+	});
+	describe("Methods", function () {
+		describe("oAuth2JWT", function () {
+			it("authenticates user using header included token", function (done) {
+				const key = fs.readFileSync(
+					path.join(__dirname, "../resources/private.key")
+				);
+				const payload = { foo: "bar" };
+				const token = jwt.sign(payload, key, { algorithm: "RS256" });
+				const header = `Bearer ${token}`;
 
-        const oauthMethod = new authModule.Method.oAuth2JWT({
-          key: authModule.Key.fromFile(path.join(__dirname, '../resources/public.pem')),
-          algo: [authModule.Key.RS256]
-        });
+				const oauthMethod = new authModule.Method.oAuth2JWT({
+					key: authModule.Key.fromFile(
+						path.join(__dirname, "../resources/public.pem")
+					),
+					algo: [authModule.Key.RS256],
+				});
 
-        oauthMethod.execute({authorization: header}, (err, result, credentials) => {
-          expect(result).to.have.property('foo', 'bar');
-          expect(credentials.source).to.equal('header');
-          expect(credentials.key).to.equal('authorization');
-          expect(credentials.value).to.equal(header);
-          expect(err).to.be.null;
-          done();
-        });
+				oauthMethod.execute(
+					{ authorization: header },
+					(err, result, credentials) => {
+						expect(result).to.have.property("foo", "bar");
+						expect(credentials.source).to.equal("header");
+						expect(credentials.key).to.equal("authorization");
+						expect(credentials.value).to.equal(header);
+						expect(err).to.be.null;
+						done();
+					}
+				);
 			});
 		});
 	});
